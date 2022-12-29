@@ -4,6 +4,10 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.0'
 }
 
+jar {
+    enabled = false
+}
+
 group = 'xyz.ssrahul96.'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
@@ -34,3 +38,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(Test) {
+	scanForTestClasses = false
+	include "**/*Test.class" // whatever Ant pattern matches your test class files
+}
+
