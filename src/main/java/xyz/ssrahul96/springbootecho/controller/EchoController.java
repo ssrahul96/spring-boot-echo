@@ -46,16 +46,17 @@ public class EchoController {
         logdata.setUrl(request.getServletPath());
         logdata.setHeaders(headers);
 
-        String body = new String(rawBody, StandardCharsets.UTF_8);
-        if (StringUtils.isNotBlank(body)) {
-            logdata.setBody(body);
+        if (rawBody != null) {
+            String body = new String(rawBody, StandardCharsets.UTF_8);
+            if (StringUtils.isNotBlank(body)) {
+                logdata.setBody(body);
+            }
         }
 
         String additionalContents = System.getProperty("ADDITIONAL_CONTENT");
         if (StringUtils.isNotBlank(additionalContents)) {
             logdata.setAdditionalContents(additionalContents);
         }
-
 
         String transactionId = getTransactionId(headers);
         ThreadContext.put("transaction-id", transactionId);
