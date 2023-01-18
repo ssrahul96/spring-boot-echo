@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.system.SystemProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class EchoController {
             }
         }
 
-        String additionalContents = System.getProperty("ADDITIONAL_CONTENT");
+        String additionalContents = SystemProperties.get("SERVER_PORT");
         if (StringUtils.isNotBlank(additionalContents)) {
             logdata.setAdditionalContents(additionalContents);
         }
