@@ -18,4 +18,5 @@ public class LogData {
     private Map<String, String> headers;
     private String body;
     private String additionalContents;
+    private Map<String, String> queryParams;
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import xyz.ssrahul96.springbootecho.models.LogData;
 
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,7 @@ public class EchoController {
     private ObjectMapper objectMapper;
 
     @RequestMapping(value = "/**", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-    public ResponseEntity<LogData> echoBack(@RequestBody(required = false) byte[] rawBody) throws JsonProcessingException {
+    public ResponseEntity<LogData> echoBack(@RequestBody(required = false) byte[] rawBody,@RequestParam Map<String,String> requestParams) throws JsonProcessingException {
 
         final Map<String, String> headers = Collections.list(request.getHeaderNames()).stream().collect(Collectors.toMap(Function.identity(), request::getHeader));
 
@@ -44,6 +45,7 @@ public class EchoController {
 
         logdata.setTimestamp(Instant.now().toEpochMilli());
         logdata.setMethod(request.getMethod());
+        logdata.setQueryParams(requestParams);
         logdata.setUrl(request.getServletPath());
         logdata.setHeaders(headers);
 
