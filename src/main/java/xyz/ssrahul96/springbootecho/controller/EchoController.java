@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.system.SystemProperties;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static xyz.ssrahul96.springbootecho.utils.DelayUtil.simulateDelay;
+
 
 @Controller
 @Log4j2
@@ -36,8 +39,10 @@ public class EchoController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public static final String DELAY = "delay";
+
     @RequestMapping(value = "/**", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-    public ResponseEntity<LogData> echoBack(@RequestBody(required = false) byte[] rawBody,@RequestParam Map<String,String> requestParams) throws JsonProcessingException {
+    public ResponseEntity<LogData> echoBack(@RequestBody(required = false) byte[] rawBody, @RequestParam Map<String, String> requestParams) throws JsonProcessingException {
 
         final Map<String, String> headers = Collections.list(request.getHeaderNames()).stream().collect(Collectors.toMap(Function.identity(), request::getHeader));
 
@@ -48,6 +53,8 @@ public class EchoController {
         logdata.setQueryParams(requestParams);
         logdata.setUrl(request.getServletPath());
         logdata.setHeaders(headers);
+
+        simulateRequestDelay(requestParams);
 
         if (rawBody != null) {
             String body = new String(rawBody, StandardCharsets.UTF_8);
@@ -67,6 +74,12 @@ public class EchoController {
         log.info(objectMapper.writeValueAsString(logdata));
 
         return new ResponseEntity<>(logdata, HttpStatus.OK);
+    }
+
+    private void simulateRequestDelay(Map<String, String> requestParams) {
+        if (requestParams.containsKey(DELAY)) {
+            simulateDelay(requestParams.get(DELAY));
+        }
     }
 
     private String getTransactionId(Map<String, String> headers) {
