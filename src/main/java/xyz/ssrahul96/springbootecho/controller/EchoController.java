@@ -54,7 +54,7 @@ public class EchoController {
             }
         }
 
-        String additionalContents = SystemProperties.get("SERVER_PORT");
+        String additionalContents = SystemProperties.get("ADDITIONAL_CONTENT");
         if (StringUtils.isNotBlank(additionalContents)) {
             logdata.setAdditionalContents(additionalContents);
         }
