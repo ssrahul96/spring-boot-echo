@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.system.SystemProperties;
@@ -19,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.ssrahul96.springbootecho.models.LogData;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Collections;
@@ -66,6 +67,18 @@ public class EchoController {
         String additionalContents = SystemProperties.get("ADDITIONAL_CONTENT");
         if (StringUtils.isNotBlank(additionalContents)) {
             logdata.setAdditionalContents(additionalContents);
+        }
+
+        String showHostName = SystemProperties.get("SHOW_HOSTNAME");
+
+        if (Boolean.parseBoolean(showHostName)) {
+            String hostName = null;
+            try {
+                hostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                log.error(e.getMessage(), e);
+            }
+            logdata.setHostName(hostName);
         }
 
         String transactionId = getTransactionId(headers);

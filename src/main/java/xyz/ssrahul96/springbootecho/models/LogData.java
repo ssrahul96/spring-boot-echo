@@ -19,4 +19,5 @@ public class LogData {
     private String body;
     private String additionalContents;
     private Map<String, String> queryParams;
+    private String hostName;
 }
